@@ -21,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +46,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(){
+fun MyApp() {
+    val moneyCounter = remember {
+        mutableStateOf(0)
+    }
     // A surface container using the 'background' color from the theme
     Surface(
         modifier = Modifier
@@ -56,23 +61,28 @@ fun MyApp(){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Kes. 100", style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold))
+            Text(
+                text = "Kes. ${moneyCounter.value}",
+                style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            )
             Spacer(modifier = Modifier.height(30.dp))
-            CreateCircle()
+            CreateCircle(moneyCounter = moneyCounter.value) {
+                moneyCounter.value = it
+            }
         }
     }
 }
 
 
-@Preview
 @Composable
-fun CreateCircle() {
+fun CreateCircle(moneyCounter: Int = 0, updateMoneyCounter: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .padding(all = 4.dp)
             .size(100.dp)
             .background(Color(0xFF546E7A), CircleShape)
             .clickable {
+                updateMoneyCounter(moneyCounter + 1)
                 Log.d("TAP", "CreateCircle: TAP")
             },
         shape = CircleShape,
